@@ -5,7 +5,10 @@ public class GeneratorMain {
 	public static void main(String[] args) {
 		Generator generator = new Generator();
 		generator.generate();
-		Cell[][] maze = generator.getMaze();
+		System.out.println(generator.toString());
+		
+		
+		/*Cell[][] maze = generator.getMaze();
 		for(int i = 0; i < 16; i++){
 			for(int j = 0; j < 16; j++){
 				int count = 0;
@@ -20,7 +23,7 @@ public class GeneratorMain {
 				System.out.print(count + " ");
 			}
 			System.out.println("");
-		}
+		}*/
 
 	}
 

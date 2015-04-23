@@ -26,10 +26,10 @@ public class Generator {
 				else if(i == 15){ //bottom row
 					temp.setDown(true);
 					temp.setEdge(true);
-					if(j%2 == 1){
+					if(j%2 == 0){
 						temp.setLeft(true);
 					}
-					if(j%2 == 0){
+					if(j%2 == 1){
 						temp.setRight(true);
 					}
 				}
@@ -63,5 +63,47 @@ public class Generator {
 	
 	public Cell[][] getMaze(){
 		return maze;
+	}
+	
+	public String toString(){
+		String ret = "";
+		boolean[] lastDown = new boolean[16];
+		for(int i = 0; i < 16; i++){
+			boolean[] LandR = new boolean[17];
+			for(int j = 0; j < 16; j++){
+				ret+= "O";
+				if(maze[i][j].getUp() || lastDown[j])
+					ret+= "---";
+				else
+					ret+= "   ";
+				if(maze[i][j].getLeft())
+					LandR[j] = true;
+				if(maze[i][j].getRight())
+					LandR[j+1] = true;
+				if(maze[i][j].getDown())
+					lastDown[j] = true;
+				else
+					lastDown[j] = false;
+			}
+			ret+= "O";
+			ret+= "\n";
+			for(int k = 0; k < 17; k++){
+				if(LandR[k])
+					ret+= "|";
+				else
+					ret+= " ";
+				ret+="   ";
+			}
+			ret+="\n";
+		}
+		for(int i = 0; i < 16; i++){
+			ret+= "O";
+			if(lastDown[i])
+				ret+= "---";
+			else
+				ret+= "   ";
+		}
+		ret+= "O";
+		return ret;
 	}
 }
