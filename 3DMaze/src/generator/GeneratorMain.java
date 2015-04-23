@@ -3,7 +3,7 @@ package generator;
 public class GeneratorMain {
 
 	public static void main(String[] args) {
-		Generator generator = new Generator();
+		Generator generator = new Generator(8,8);
 		generator.generate();
 		System.out.println(generator.toString());
 		

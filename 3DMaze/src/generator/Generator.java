@@ -2,16 +2,20 @@ package generator;
 
 public class Generator {
 	
-	private Cell[][] maze = new Cell[16][16];
+	private Cell[][] maze;
+	private int height;
+	private int width;
 	
-	public Generator(){
-		
+	public Generator(int m, int n){
+		height = m;
+		width = n;
+		maze = new Cell[height][width];
 	}
 
 	public void generate(){
 		Cell temp;
-		for(int i = 0; i < 16; i++){
-			for(int j = 0; j < 16; j++){
+		for(int i = 0; i < height; i++){
+			for(int j = 0; j < width; j++){
 				temp = maze[i][j] = new Cell(i,j);
 				if(i == 0){//top row
 					temp.setUp(true);
@@ -23,7 +27,7 @@ public class Generator {
 						temp.setLeft(true);
 					}
 				}
-				else if(i == 15){ //bottom row
+				else if(i == height-1){ //bottom row
 					temp.setDown(true);
 					temp.setEdge(true);
 					if(j%2 == 0){
@@ -54,10 +58,10 @@ public class Generator {
 		//fix corners
 		maze[0][0].setLeft(true);
 		//maze[0][0].setRight(false);
-		maze[15][0].setLeft(true);
-		maze[15][0].setRight(false);
-		maze[0][15].setRight(true);
-		maze[0][15].setLeft(false);
+		maze[height-1][0].setLeft(true);
+		maze[height-1][0].setRight(false);
+		maze[0][width-1].setRight(true);
+		maze[0][width-1].setLeft(false);
 		
 	}
 	
@@ -67,10 +71,10 @@ public class Generator {
 	
 	public String toString(){
 		String ret = "";
-		boolean[] lastDown = new boolean[16];
-		for(int i = 0; i < 16; i++){
-			boolean[] LandR = new boolean[17];
-			for(int j = 0; j < 16; j++){
+		boolean[] lastDown = new boolean[width];
+		for(int i = 0; i < height; i++){
+			boolean[] LandR = new boolean[width+1];
+			for(int j = 0; j < width; j++){
 				ret+= "O";
 				if(maze[i][j].getUp() || lastDown[j])
 					ret+= "---";
@@ -87,7 +91,7 @@ public class Generator {
 			}
 			ret+= "O";
 			ret+= "\n";
-			for(int k = 0; k < 17; k++){
+			for(int k = 0; k < width+1; k++){
 				if(LandR[k])
 					ret+= "|";
 				else
@@ -96,7 +100,7 @@ public class Generator {
 			}
 			ret+="\n";
 		}
-		for(int i = 0; i < 16; i++){
+		for(int i = 0; i < width; i++){
 			ret+= "O";
 			if(lastDown[i])
 				ret+= "---";
