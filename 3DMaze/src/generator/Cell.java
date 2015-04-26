@@ -8,9 +8,11 @@ public class Cell {
 	private boolean left;
 	private boolean right;
 	private boolean isEdge;
+	private float width;
+	private float height;
 	
 	
-	public Cell(int col, int r){
+	public Cell(int col, int r, float width, float height){
 		this.column = col;
 		this.row = r;
 		this.up = false;
@@ -18,6 +20,8 @@ public class Cell {
 		this.left = false;
 		this.right = false;
 		this.isEdge = false;
+		this.width = width;
+		this.height = height;
 	}
 	
 	public Cell(int col, int r, boolean isUp, boolean isDown, boolean isLeft, boolean isRight){

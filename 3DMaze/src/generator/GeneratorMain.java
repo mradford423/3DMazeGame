@@ -43,7 +43,7 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		private final GLUT glut = new GLUT();
 
 	public static void main(String[] args) {
-		Generator generator = new Generator(8,8);
+		Generator generator = new Generator(8,8,4,4);
 		generator.generate();
 		System.out.println(generator.toString());
 		new GeneratorMain();
@@ -152,6 +152,9 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 	@Override
 	public void keyPressed(KeyEvent e) {
 		switch(e.getKeyCode()) {
+			/*case KeyEvent.VK_W:
+				cameraPositionZ += .5f;
+				break;*/
 			case KeyEvent.VK_ESCAPE:
 			case KeyEvent.VK_Q:
 			System.exit(0);
