@@ -269,7 +269,8 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		gl.glVertex3f(-1.0f, -0.5f, 0.0f); //top left
 		gl.glVertex3f(1.0f, -0.5f, 0.0f); //top right
 		gl.glVertex3f(1.0f, -0.5f, 0.0f); //bottom right
-		gl.glEnd();*/
+		gl.glEnd();
+		*/
 		
 		
 		gl.glPopMatrix();
