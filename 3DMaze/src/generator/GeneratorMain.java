@@ -41,11 +41,9 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		private GL gl;
 		private final GLU glu = new GLU();
 		private final GLUT glut = new GLUT();
+		private Cell[][] maze;
 
 	public static void main(String[] args) {
-		Generator generator = new Generator(8,8,4,4);
-		generator.generate();
-		System.out.println(generator.toString());
 		new GeneratorMain();
 		
 		
@@ -216,6 +214,10 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
+		Generator generator = new Generator(8,8,4,4);
+		maze = generator.getMaze();
+		generator.generate();
+		System.out.println(generator.toString());
 		gl = drawable.getGL();
 		gl.setSwapInterval(1);
 		gl.glColorMaterial(GL.GL_FRONT, GL.GL_DIFFUSE);
