@@ -2,14 +2,14 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="C:/Users/Josh/Downloads/jogl-1.1.1-windows-amd64/jogl-1.1.1-windows-amd64/lib/gluegen-rt.jar">
+	<classpathentry kind="lib" path="Libraries/gluegen-rt.jar">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Users/Josh/Downloads/jogl-1.1.1-windows-amd64/jogl-1.1.1-windows-amd64/lib"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="3DMaze/Libraries"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Josh/Downloads/jogl-1.1.1-windows-amd64/jogl-1.1.1-windows-amd64/lib/jogl.jar">
+	<classpathentry kind="lib" path="Libraries/jogl.jar">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Users/Josh/Downloads/jogl-1.1.1-windows-amd64/jogl-1.1.1-windows-amd64/lib"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="3DMaze/Libraries"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
