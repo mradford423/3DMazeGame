@@ -277,11 +277,11 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 	}
 
 	@Override
+
 	public void init(GLAutoDrawable drawable) {
-		Generator generator = new Generator(8,8,4,4);
+		Generator generator = new Generator(8,9,4,4);
 		maze = generator.getMaze();
 		generator.generate();
-		System.out.println(generator.toString());
 		System.out.println(maze[0].length);
 		gl = drawable.getGL();
 		gl.setSwapInterval(1);
