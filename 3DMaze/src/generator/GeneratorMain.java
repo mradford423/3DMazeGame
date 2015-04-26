@@ -203,12 +203,67 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		gl.glRotatef(angleY, 1.0f, 0.0f, 0.0f);
 		gl.glRotatef(angleX, 0.0f, 1.0f, 0.0f);
 		gl.glTranslatef(-cameraPositionX, -cameraPositionY, cameraPositionZ);
-		//Display a basic Triangle for camera testing
-		gl.glBegin(GL.GL_TRIANGLES);
-		gl.glVertex3f(0.0f, 1.0f, 0.0f);
-		gl.glVertex3f(-1.0f, -0.5f, 0.0f);
-		gl.glVertex3f(1.0f, -0.5f, 0.0f);
-		gl.glEnd();
+		//Display Maze
+				for(int i = 0; i < maze.length; i++){
+					for(int j = 0; j < maze[i].length; j++){
+						float cwidth = 4; //maze[i][j].getWidth();
+						float cheight = 4; //maze[i][j].getHeight();
+						float x = cwidth * j;
+						float z = cheight * i;
+						if(i-1 >= 0){
+							if(!maze[i-1][j].getDown() && maze[i][j].getUp()){
+								gl.glBegin(GL.GL_QUADS);
+								gl.glVertex3f(x, 0, z); //bottom left
+								gl.glVertex3f(x, 1, z); //top left
+								gl.glVertex3f(x+cwidth, 1, z); //top right
+								gl.glVertex3f(x+cwidth, 0, z); //bottom right
+								gl.glEnd();
+							}
+						}
+						else if(maze[i][j].getUp()){
+							gl.glBegin(GL.GL_QUADS);
+							gl.glVertex3f(x, 0, z); //bottom left
+							gl.glVertex3f(x, 1, z); //top left
+							gl.glVertex3f(x+cwidth, 1, z); //top right
+							gl.glVertex3f(x+cwidth, 0, z); //bottom right
+							gl.glEnd();
+						}
+						if(j-1 >= 0){
+							if(!maze[i][j-1].getRight() && maze[i][j].getLeft()){
+								gl.glBegin(GL.GL_QUADS);
+								gl.glVertex3f(x, 0, z); //bottom left
+								gl.glVertex3f(x, 1, z); //top left
+								gl.glVertex3f(x, 1, z-cheight); //top right
+								gl.glVertex3f(x, 0, z-cheight); //bottom right
+								gl.glEnd();
+							}
+						}
+						else if(maze[i][j].getLeft()){
+							gl.glBegin(GL.GL_QUADS);
+							gl.glVertex3f(x, 0, z); //bottom left
+							gl.glVertex3f(x, 1, z); //top left
+							gl.glVertex3f(x, 1, z-cheight); //top right
+							gl.glVertex3f(x, 0, z-cheight); //bottom right
+							gl.glEnd();
+						}
+						if(maze[i][j].getDown()){
+							gl.glBegin(GL.GL_QUADS);
+							gl.glVertex3f(x, 0, z-cheight); //bottom left
+							gl.glVertex3f(x, 1, z-cheight); //top left
+							gl.glVertex3f(x+cwidth, 1, z-cheight); //top right
+							gl.glVertex3f(x+cwidth, 0, z-cheight); //bottom right
+							gl.glEnd();
+						}
+						if(maze[i][j].getRight()){
+							gl.glBegin(GL.GL_QUADS);
+							gl.glVertex3f(x+cwidth, 0, z); //bottom left
+							gl.glVertex3f(x+cwidth, 1, z); //top left
+							gl.glVertex3f(x+cwidth, 1, z-cheight); //top right
+							gl.glVertex3f(x+cwidth, 0, z-cheight); //bottom right
+							gl.glEnd();
+						}
+					}
+				}
 		gl.glPopMatrix();
 	}
 
