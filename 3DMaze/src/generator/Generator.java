@@ -5,18 +5,22 @@ public class Generator {
 	private Cell[][] maze;
 	private int height;
 	private int width;
+	private float cellWidth;
+	private float cellHeight;
 	
-	public Generator(int m, int n){
+	public Generator(int m, int n, float cellWidth, float cellHeight){
 		height = m;
 		width = n;
 		maze = new Cell[height][width];
+		this.cellWidth = cellWidth;
+		this.cellHeight = cellHeight;
 	}
 
 	public void generate(){
 		Cell temp;
 		for(int i = 0; i < height; i++){
 			for(int j = 0; j < width; j++){
-				temp = maze[i][j] = new Cell(i,j);
+				temp = maze[i][j] = new Cell(i,j,cellWidth,cellHeight);
 				if(i == 0){//top row
 					temp.setUp(true);
 					temp.setEdge(true);
