@@ -86,6 +86,14 @@ public class Cell {
 		return row;
 	}
 	
+	public float getWidth(){
+		return width;
+	}
+	
+	public float getHeight(){
+		return height;
+	}
+	
 	public boolean getEdge(){
 		return isEdge;
 	}
