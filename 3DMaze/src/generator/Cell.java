@@ -1,6 +1,6 @@
 package generator;
 
-//the cells that make up the maze
+//the cells which make up the maze
 public class Cell {
 	private int column;
 	private int row;
