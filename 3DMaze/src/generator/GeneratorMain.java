@@ -102,7 +102,7 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 			//System.out.println(cameraAngleX);
 			//cameraAngleX = 0;
 			cameraAngleX += 1 * (newX - winW/2);
-			//System.out.println(cameraAngleX);
+			System.out.println(cameraAngleX);
 			//System.out.println(newY - winH/2);
 			//System.out.println(newY);
 			//System.out.println(winH/2);
@@ -112,11 +112,11 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 			else if(cameraAngleY < -90){
 				cameraAngleY = -90;
 			}
-			if(cameraAngleX > (360)){
-				cameraAngleX -= (720);
+			if(cameraAngleX > (1500)){
+				cameraAngleX = (-300);
 			}
-			else if(cameraAngleX < (-360)){
-				cameraAngleX += (720);
+			else if(cameraAngleX < (-1500)){
+				cameraAngleX = 0;
 			}
 			//System.out.println(cameraAngleY);
 			//glu.gluLookAt(10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 0, 1.0, 0);
@@ -150,15 +150,22 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 	@Override
 	public void keyPressed(KeyEvent e) {
 		switch(e.getKeyCode()) {
-			/*case KeyEvent.VK_W:
+		/*case KeyEvent.VK_W:
 				cameraPositionZ += .5f;
 				break;*/
-			case KeyEvent.VK_ESCAPE:
-			case KeyEvent.VK_Q:
+		case KeyEvent.VK_SPACE:
+			cameraPositionY += .5f;
+			break;
+		case KeyEvent.VK_B:
+			cameraPositionY -= .5f;
+			break;
+		case KeyEvent.VK_ESCAPE:
+		case KeyEvent.VK_Q:
 			System.exit(0);
 			break;
+			
 		}
-		
+
 	}
 
 	@Override
@@ -178,7 +185,6 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 			cameraPositionX -= .1f;
 			break;
 		}
-		
 	}
 
 	@Override
@@ -233,8 +239,8 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 								gl.glBegin(GL.GL_QUADS);
 								gl.glVertex3f(x, 0, z); //bottom left
 								gl.glVertex3f(x, 1, z); //top left
-								gl.glVertex3f(x, 1, z-cheight); //top right
-								gl.glVertex3f(x, 0, z-cheight); //bottom right
+								gl.glVertex3f(x, 1, z+cheight); //top right
+								gl.glVertex3f(x, 0, z+cheight); //bottom right
 								gl.glEnd();
 							}
 						}
@@ -242,24 +248,24 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 							gl.glBegin(GL.GL_QUADS);
 							gl.glVertex3f(x, 0, z); //bottom left
 							gl.glVertex3f(x, 1, z); //top left
-							gl.glVertex3f(x, 1, z-cheight); //top right
-							gl.glVertex3f(x, 0, z-cheight); //bottom right
+							gl.glVertex3f(x, 1, z+cheight); //top right
+							gl.glVertex3f(x, 0, z+cheight); //bottom right
 							gl.glEnd();
 						}
 						if(maze[i][j].getDown()){
 							gl.glBegin(GL.GL_QUADS);
-							gl.glVertex3f(x, 0, z-cheight); //bottom left
-							gl.glVertex3f(x, 1, z-cheight); //top left
-							gl.glVertex3f(x+cwidth, 1, z-cheight); //top right
-							gl.glVertex3f(x+cwidth, 0, z-cheight); //bottom right
+							gl.glVertex3f(x, 0, z+cheight); //bottom left
+							gl.glVertex3f(x, 1, z+cheight); //top left
+							gl.glVertex3f(x+cwidth, 1, z+cheight); //top right
+							gl.glVertex3f(x+cwidth, 0, z+cheight); //bottom right
 							gl.glEnd();
 						}
 						if(maze[i][j].getRight()){
 							gl.glBegin(GL.GL_QUADS);
 							gl.glVertex3f(x+cwidth, 0, z); //bottom left
 							gl.glVertex3f(x+cwidth, 1, z); //top left
-							gl.glVertex3f(x+cwidth, 1, z-cheight); //top right
-							gl.glVertex3f(x+cwidth, 0, z-cheight); //bottom right
+							gl.glVertex3f(x+cwidth, 1, z+cheight); //top right
+							gl.glVertex3f(x+cwidth, 0, z+cheight); //bottom right
 							gl.glEnd();
 						}
 					}
@@ -282,8 +288,8 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		gl.glShadeModel(GL.GL_SMOOTH);
 		gl.glEnable(GL.GL_DEPTH_TEST);
 		gl.glDepthFunc(GL.GL_LESS);
-		gl.glCullFace(GL.GL_BACK);
-		gl.glEnable(GL.GL_CULL_FACE);
+		//gl.glCullFace(GL.GL_BACK);
+		//gl.glEnable(GL.GL_CULL_FACE);
 		// set clear color: this determines the background color (which is dark gray)
 		gl.glClearColor(.3f, .3f, .3f, 1f);
 		gl.glClearDepth(1.0f);
