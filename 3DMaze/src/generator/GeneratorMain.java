@@ -206,8 +206,8 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		//Display Maze
 				for(int i = 0; i < maze.length; i++){
 					for(int j = 0; j < maze[i].length; j++){
-						float cwidth = 4; //maze[i][j].getWidth();
-						float cheight = 4; //maze[i][j].getHeight();
+						float cwidth = maze[i][j].getWidth();
+						float cheight = maze[i][j].getHeight();
 						float x = cwidth * j;
 						float z = cheight * i;
 						if(i-1 >= 0){
