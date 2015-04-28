@@ -212,8 +212,8 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		//Display Maze
 				for(int i = 0; i < maze.length; i++){
 					for(int j = 0; j < maze[i].length; j++){
-						float cwidth = 4; //maze[i][j].getWidth();
-						float cheight = 4; //maze[i][j].getHeight();
+						float cwidth = maze[i][j].getWidth();
+						float cheight = maze[i][j].getHeight();
 						float x = cwidth * j;
 						float z = cheight * i;
 						if(i-1 >= 0){
@@ -239,8 +239,8 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 								gl.glBegin(GL.GL_QUADS);
 								gl.glVertex3f(x, 0, z); //bottom left
 								gl.glVertex3f(x, 1, z); //top left
-								gl.glVertex3f(x, 1, z-cheight); //top right
-								gl.glVertex3f(x, 0, z-cheight); //bottom right
+								gl.glVertex3f(x, 1, z+cheight); //top right
+								gl.glVertex3f(x, 0, z+cheight); //bottom right
 								gl.glEnd();
 							}
 						}
@@ -248,24 +248,24 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 							gl.glBegin(GL.GL_QUADS);
 							gl.glVertex3f(x, 0, z); //bottom left
 							gl.glVertex3f(x, 1, z); //top left
-							gl.glVertex3f(x, 1, z-cheight); //top right
-							gl.glVertex3f(x, 0, z-cheight); //bottom right
+							gl.glVertex3f(x, 1, z+cheight); //top right
+							gl.glVertex3f(x, 0, z+cheight); //bottom right
 							gl.glEnd();
 						}
 						if(maze[i][j].getDown()){
 							gl.glBegin(GL.GL_QUADS);
-							gl.glVertex3f(x, 0, z-cheight); //bottom left
-							gl.glVertex3f(x, 1, z-cheight); //top left
-							gl.glVertex3f(x+cwidth, 1, z-cheight); //top right
-							gl.glVertex3f(x+cwidth, 0, z-cheight); //bottom right
+							gl.glVertex3f(x, 0, z+cheight); //bottom left
+							gl.glVertex3f(x, 1, z+cheight); //top left
+							gl.glVertex3f(x+cwidth, 1, z+cheight); //top right
+							gl.glVertex3f(x+cwidth, 0, z+cheight); //bottom right
 							gl.glEnd();
 						}
 						if(maze[i][j].getRight()){
 							gl.glBegin(GL.GL_QUADS);
 							gl.glVertex3f(x+cwidth, 0, z); //bottom left
 							gl.glVertex3f(x+cwidth, 1, z); //top left
-							gl.glVertex3f(x+cwidth, 1, z-cheight); //top right
-							gl.glVertex3f(x+cwidth, 0, z-cheight); //bottom right
+							gl.glVertex3f(x+cwidth, 1, z+cheight); //top right
+							gl.glVertex3f(x+cwidth, 0, z+cheight); //bottom right
 							gl.glEnd();
 						}
 					}
