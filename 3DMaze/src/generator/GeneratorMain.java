@@ -335,6 +335,8 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		Generator generator = new Generator(8,8,mazeWidth,mazeHeight);
 		maze = generator.getMaze();
 		generator.generate();
+		generator.maze1();
+		System.out.println(generator.toString());
 		gl = drawable.getGL();
 		gl.setSwapInterval(1);
 		gl.glColorMaterial(GL.GL_FRONT, GL.GL_DIFFUSE);
