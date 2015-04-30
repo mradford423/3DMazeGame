@@ -335,7 +335,6 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		gl.glVertex3f(maze[0][0].getHeight(), 0, maze[0].length*(maze[0][0].getWidth())); //bottom right
 		gl.glEnd();
 		//add ceiling 
-		
 		gl.glBegin(GL.GL_QUADS);
 		gl.glVertex3f(maze.length*(maze[0][0].getHeight()), 1, 0); //bottom left
 		gl.glVertex3f(0, 1, 0); //top left
