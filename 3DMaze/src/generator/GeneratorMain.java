@@ -32,16 +32,20 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		private float angleY = 0.0f;
 		private float angleX = 0.0f;
 		private float cameraAngleY = 0.0f;
-		private float cameraAngleX = 0.0f;
-		private float cameraPositionX = 0.0f;
-		private float cameraPositionY = 0.0f;
-		private float cameraPositionZ = 0.0f;
+		private float cameraAngleX = 900f;
+		private float cameraPositionX = 1.0f;
+		private float cameraPositionY = 0.5f;
+		private float cameraPositionZ = 8f;
 		private boolean drawWireframe = false;
 		private float lightPos[] = { -5.0f, 10.0f, 5.0f, 1.0f };
 		private GL gl;
 		private final GLU glu = new GLU();
 		private final GLUT glut = new GLUT();
 		private Cell[][] maze;
+		private int mazeWidth = 2;
+		private int mazeHeight = 2;
+		int cellBoundariesX[];
+		int cellBoundariesZ[];
 
 	public static void main(String[] args) {
 		new GeneratorMain();
@@ -102,7 +106,7 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 			//System.out.println(cameraAngleX);
 			//cameraAngleX = 0;
 			cameraAngleX += 1 * (newX - winW/2);
-			System.out.println(cameraAngleX);
+			//System.out.println(cameraAngleX);
 			//System.out.println(newY - winH/2);
 			//System.out.println(newY);
 			//System.out.println(winH/2);
@@ -116,7 +120,7 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 				cameraAngleX = (-300);
 			}
 			else if(cameraAngleX < (-1500)){
-				cameraAngleX = 0;
+				cameraAngleX = 300;
 			}
 			//System.out.println(cameraAngleY);
 			//glu.gluLookAt(10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 0, 1.0, 0);
@@ -146,6 +150,26 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		}
 		
 	}
+	
+	private Cell calculateCurrentCell(float x, float y){
+		int heightNum = (int) (maze.length/y);
+		int heightCount = 0;
+		int widthCount = 0;
+		float yCopy = 10;
+		float xCopy = 0;
+		while(y <= yCopy){
+			yCopy -= mazeHeight;
+			heightCount++;
+		}
+		heightCount--;
+		while(x >= xCopy){
+			xCopy += mazeWidth;
+			widthCount++;
+		}
+		widthCount--;
+		//System.out.println(widthCount);
+		return maze[heightCount][widthCount];
+	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
@@ -172,19 +196,52 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 	public void keyTyped(KeyEvent e) {
 		switch(e.getKeyChar()){
 		case 'w':
-			cameraPositionZ += .1f;
-			//System.out.println(cameraPositionZ);
+			Cell testCell = calculateCurrentCell(cameraPositionX, cameraPositionZ);
+			int count = 0;
+			while(cameraPositionZ < cellBoundariesZ[count]){
+				count++;
+			}
+			cameraPositionZ -= .1f;
+			if(cameraPositionZ <= (cellBoundariesZ[count] + .1f) && testCell.getDown() == true){
+					cameraPositionZ += .1f;
+			}
 			break;
 		case 's':
-			cameraPositionZ -= .1f;
+			Cell testCell2 = calculateCurrentCell(cameraPositionX, cameraPositionZ);
+			int count2 = 0;
+			while(cameraPositionZ > cellBoundariesZ[count2]){
+				count2++;
+			}
+			cameraPositionZ += .1f;
+			if(cameraPositionZ >= (cellBoundariesZ[count2] - .1f) && testCell2.getUp() == true){
+					cameraPositionZ -= .1f;
+			}
 			break;
 		case 'd':
-			cameraPositionX += .1;
+			Cell testCell3 = calculateCurrentCell(cameraPositionX, cameraPositionZ);
+			int count3 = 0;
+			while(cameraPositionX < cellBoundariesX[count3]){
+				count3++;
+			}
+			cameraPositionX -= .1f;
+			if(cameraPositionX <= (cellBoundariesX[count3] + .1f) && testCell3.getLeft() == true){
+					cameraPositionX += .1f;
+			}
 			break;
 		case 'a':
-			cameraPositionX -= .1f;
+			Cell testCell4 = calculateCurrentCell(cameraPositionX, cameraPositionZ);
+			int count4 = 0;
+			while(cameraPositionX > cellBoundariesX[count4]){
+				count4++;
+			}
+			cameraPositionX += .1f;
+			if(cameraPositionX >= (cellBoundariesX[count4] - .1f) && testCell4.getRight() == true){
+					cameraPositionX -= .1f;
+			}
 			break;
 		}
+		//System.out.println(cameraPositionX);
+		calculateCurrentCell(cameraPositionX, cameraPositionZ);
 	}
 
 	@Override
@@ -275,10 +332,9 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
-		Generator generator = new Generator(8,9,4,4);
+		Generator generator = new Generator(8,8,mazeWidth,mazeHeight);
 		maze = generator.getMaze();
 		generator.generate();
-		System.out.println(maze[0].length);
 		gl = drawable.getGL();
 		gl.setSwapInterval(1);
 		gl.glColorMaterial(GL.GL_FRONT, GL.GL_DIFFUSE);
@@ -294,7 +350,30 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		gl.glClearColor(.3f, .3f, .3f, 1f);
 		gl.glClearDepth(1.0f);
 		initialized = true;
-
+		cellBoundariesX = new int[maze.length + 1];
+		cellBoundariesZ = new int[maze[0].length + 1];
+		int count = 0;
+		int i = 0;
+		while(i < maze.length){
+			if(i != 0){
+				count = count + mazeWidth;
+			}
+			cellBoundariesX[i] = count;
+			i++;
+		}
+		count = count + mazeWidth;
+		cellBoundariesX[i] = count;
+		count = 10;
+		i = 0;
+		while(i < maze[0].length){
+			if(i != 0){
+				count = count - mazeHeight;
+			}
+			cellBoundariesZ[i] = count;
+			i++;
+		}
+		count = count - mazeHeight;
+		cellBoundariesZ[i] = count;
 	}
 
 	@Override
