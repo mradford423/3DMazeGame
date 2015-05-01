@@ -327,6 +327,20 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 						}
 					}
 				}
+		//add floor
+		gl.glBegin(GL.GL_QUADS);
+		gl.glVertex3f(maze.length*(maze[0][0].getHeight()), 0, 0); //bottom left
+		gl.glVertex3f(0, 0, 0); //top left
+		gl.glVertex3f(0, 0, maze[0].length*(maze[0][0].getWidth())); //top right
+		gl.glVertex3f(maze.length*maze[0][0].getHeight(), 0, maze[0].length*(maze[0][0].getWidth())); //bottom right
+		gl.glEnd();
+		//add ceiling 
+		gl.glBegin(GL.GL_QUADS);
+		gl.glVertex3f(maze.length*(maze[0][0].getHeight()), 1, 0); //bottom left
+		gl.glVertex3f(0, 1, 0); //top left
+		gl.glVertex3f(0, 1, maze[0].length*(maze[0][0].getWidth())); //top right
+		gl.glVertex3f(maze.length*maze[0][0].getHeight(), 1, maze[0].length*(maze[0][0].getWidth())); //bottom right
+		gl.glEnd();
 		gl.glPopMatrix();
 	}
 
@@ -335,6 +349,8 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		Generator generator = new Generator(8,8,mazeWidth,mazeHeight);
 		maze = generator.getMaze();
 		generator.generate();
+		generator.maze1();
+		System.out.println(generator.toString());
 		gl = drawable.getGL();
 		gl.setSwapInterval(1);
 		gl.glColorMaterial(GL.GL_FRONT, GL.GL_DIFFUSE);
