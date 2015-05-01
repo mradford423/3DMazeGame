@@ -352,7 +352,7 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		lightPos[0] = (maze.length*maze[0][0].getHeight())/2;
 		lightPos[1] = 5.0f;
 		lightPos[2] = (maze.length*maze[0][0].getWidth())/2;
-		lightPos[3] = -5.0f;
+		lightPos[3] = 1f;
 		generator.maze1();
 		System.out.println(generator.toString());
 		gl = drawable.getGL();
