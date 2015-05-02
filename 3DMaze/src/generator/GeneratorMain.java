@@ -261,7 +261,7 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 		gl.glEnable(GL.GL_LIGHTING);
 		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, drawWireframe ? GL.GL_LINE : GL.GL_FILL);
-		gl.glColor3f(1.0f, 0.3f, 0.1f);
+		gl.glColor3f(1.0f, 1.0f, 1.0f);
 		drawShape();
 		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
 	}
