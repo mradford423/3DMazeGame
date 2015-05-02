@@ -3,12 +3,20 @@ package generator;
 import java.awt.*;
 import java.awt.event.*;
 
+import javax.imageio.ImageIO;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
 import javax.swing.JFrame;
 
 import com.sun.opengl.util.*;
+import com.sun.opengl.util.texture.Texture;
+import com.sun.opengl.util.texture.TextureIO;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import javax.media.opengl.GLEventListener;
@@ -35,7 +43,7 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		private float cameraAngleX = 900f;
 		private float cameraPositionX = 1.0f;
 		private float cameraPositionY = 0.5f;
-		private float cameraPositionZ = 8f;
+		private float cameraPositionZ = 8.5f;
 		private boolean drawWireframe = false;
 		private float lightPos[] = { -5.0f, 10.0f, 5.0f, 1.0f };
 		private GL gl;
@@ -46,6 +54,7 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		private int mazeHeight = 2;
 		int cellBoundariesX[];
 		int cellBoundariesZ[];
+		Texture textures[] = new Texture[3];
 
 	public static void main(String[] args) {
 		new GeneratorMain();
@@ -167,7 +176,7 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 			widthCount++;
 		}
 		widthCount--;
-		//System.out.println(widthCount);
+		System.out.println(heightCount);
 		return maze[heightCount][widthCount];
 	}
 
@@ -197,12 +206,15 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		switch(e.getKeyChar()){
 		case 'w':
 			Cell testCell = calculateCurrentCell(cameraPositionX, cameraPositionZ);
+			//System.out.println(testCell.getDown());
 			int count = 0;
 			while(cameraPositionZ < cellBoundariesZ[count]){
 				count++;
 			}
 			cameraPositionZ -= .1f;
-			if(cameraPositionZ <= (cellBoundariesZ[count] + .1f) && testCell.getDown() == true){
+			System.out.println(cameraPositionZ);
+			if(cameraPositionZ < (cellBoundariesZ[count] + .1f) && testCell.getDown() == true){
+					//System.out.println("stop");
 					cameraPositionZ += .1f;
 			}
 			break;
@@ -275,71 +287,131 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 						float z = cheight * i;
 						if(i-1 >= 0){
 							if(!maze[i-1][j].getDown() && maze[i][j].getUp()){
+								textures[0].enable();
+								textures[0].bind();
 								gl.glBegin(GL.GL_QUADS);
+								gl.glTexCoord2d(0.0, 0.0);
 								gl.glVertex3f(x, 0, z); //bottom left
+								gl.glTexCoord2d(0.0, 1.0);
 								gl.glVertex3f(x, 1, z); //top left
+								gl.glTexCoord2d(1.0, 1.0);
 								gl.glVertex3f(x+cwidth, 1, z); //top right
+								gl.glTexCoord2d(1.0, 0.0);
 								gl.glVertex3f(x+cwidth, 0, z); //bottom right
+								textures[0].disable();
 								gl.glEnd();
 							}
 						}
 						else if(maze[i][j].getUp()){
+							textures[0].enable();
+							textures[0].bind();
 							gl.glBegin(GL.GL_QUADS);
+							gl.glTexCoord2d(0.0, 0.0);
 							gl.glVertex3f(x, 0, z); //bottom left
+							gl.glTexCoord2d(0.0, 1.0);
 							gl.glVertex3f(x, 1, z); //top left
+							gl.glTexCoord2d(1.0, 1.0);
 							gl.glVertex3f(x+cwidth, 1, z); //top right
+							gl.glTexCoord2d(1.0, 0.0);
 							gl.glVertex3f(x+cwidth, 0, z); //bottom right
+							textures[0].disable();
 							gl.glEnd();
 						}
 						if(j-1 >= 0){
 							if(!maze[i][j-1].getRight() && maze[i][j].getLeft()){
+								textures[0].enable();
+								textures[0].bind();
 								gl.glBegin(GL.GL_QUADS);
+								gl.glTexCoord2d(0.0, 0.0);
 								gl.glVertex3f(x, 0, z); //bottom left
+								gl.glTexCoord2d(0.0, 1.0);
 								gl.glVertex3f(x, 1, z); //top left
+								gl.glTexCoord2d(1.0, 1.0);
 								gl.glVertex3f(x, 1, z+cheight); //top right
+								gl.glTexCoord2d(1.0, 0.0);
 								gl.glVertex3f(x, 0, z+cheight); //bottom right
+								textures[0].disable();
 								gl.glEnd();
 							}
 						}
 						else if(maze[i][j].getLeft()){
+							textures[0].enable();
+							textures[0].bind();
 							gl.glBegin(GL.GL_QUADS);
+							gl.glTexCoord2d(0.0, 0.0);
 							gl.glVertex3f(x, 0, z); //bottom left
+							gl.glTexCoord2d(0.0, 1.0);
 							gl.glVertex3f(x, 1, z); //top left
+							gl.glTexCoord2d(1.0, 1.0);
 							gl.glVertex3f(x, 1, z+cheight); //top right
+							gl.glTexCoord2d(1.0, 0.0);
 							gl.glVertex3f(x, 0, z+cheight); //bottom right
+							textures[0].disable();
 							gl.glEnd();
 						}
 						if(maze[i][j].getDown()){
+							textures[0].enable();
+							textures[0].bind();
 							gl.glBegin(GL.GL_QUADS);
+							gl.glTexCoord2d(0.0, 0.0);
 							gl.glVertex3f(x, 0, z+cheight); //bottom left
+							gl.glTexCoord2d(0.0, 1.0);
 							gl.glVertex3f(x, 1, z+cheight); //top left
+							gl.glTexCoord2d(1.0, 1.0);
 							gl.glVertex3f(x+cwidth, 1, z+cheight); //top right
+							gl.glTexCoord2d(1.0, 0.0);
 							gl.glVertex3f(x+cwidth, 0, z+cheight); //bottom right
+							textures[0].disable();
 							gl.glEnd();
 						}
 						if(maze[i][j].getRight()){
+							textures[0].enable();
+							textures[0].bind();
 							gl.glBegin(GL.GL_QUADS);
+							gl.glTexCoord2d(0.0, 0.0);
 							gl.glVertex3f(x+cwidth, 0, z); //bottom left
+							gl.glTexCoord2d(0.0, 1.0);
 							gl.glVertex3f(x+cwidth, 1, z); //top left
+							gl.glTexCoord2d(1.0, 1.0);
 							gl.glVertex3f(x+cwidth, 1, z+cheight); //top right
+							gl.glTexCoord2d(1.0, 0.0);
 							gl.glVertex3f(x+cwidth, 0, z+cheight); //bottom right
+							textures[0].disable();
 							gl.glEnd();
 						}
 					}
 				}
 		//add floor
+		textures[1].setTexParameteri(GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
+		textures[1].setTexParameteri(GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
+		textures[1].enable();
+		textures[1].bind();
 		gl.glBegin(GL.GL_QUADS);
+		gl.glTexCoord2d(maze.length*(maze[0][0].getHeight()), 0.0);
 		gl.glVertex3f(maze.length*(maze[0][0].getHeight()), 0, 0); //bottom left
+		gl.glTexCoord2d(0.0, 1.0);
 		gl.glVertex3f(0, 0, 0); //top left
+		gl.glTexCoord2d(1.0, maze[0].length*(maze[0][0].getWidth()));
 		gl.glVertex3f(0, 0, maze[0].length*(maze[0][0].getWidth())); //top right
+		gl.glTexCoord2d(maze.length*maze[0][0].getHeight(), maze[0].length*(maze[0][0].getWidth()));
 		gl.glVertex3f(maze.length*maze[0][0].getHeight(), 0, maze[0].length*(maze[0][0].getWidth())); //bottom right
+		textures[1].disable();
 		gl.glEnd();
 		//add ceiling 
+		textures[2].setTexParameteri(GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
+		textures[2].setTexParameteri(GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
+		textures[2].enable();
+		textures[2].bind();
 		gl.glBegin(GL.GL_QUADS);
+		gl.glTexCoord2d(maze.length*(maze[0][0].getHeight())*2.5, 0.0);
 		gl.glVertex3f(maze.length*(maze[0][0].getHeight()), 1, 0); //bottom left
+		gl.glTexCoord2d(0.0, 1.0);
 		gl.glVertex3f(0, 1, 0); //top left
+		gl.glTexCoord2d(1.0, maze[0].length*(maze[0][0].getWidth())*2.5);
 		gl.glVertex3f(0, 1, maze[0].length*(maze[0][0].getWidth())); //top right
+		gl.glTexCoord2d(maze.length*maze[0][0].getHeight()*2.5, maze[0].length*(maze[0][0].getWidth())*2.5);
 		gl.glVertex3f(maze.length*maze[0][0].getHeight(), 1, maze[0].length*(maze[0][0].getWidth())); //bottom right
+		textures[2].disable();
 		gl.glEnd();
 		gl.glPopMatrix();
 	}
@@ -390,6 +462,17 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		}
 		count = count - mazeHeight;
 		cellBoundariesZ[i] = count;
+		try {
+			textures[0] = loadTexture("brick.png");
+			textures[1] = loadTexture("carpet.png");
+			textures[2] = loadTexture("tile.png");
+		} catch (GLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -401,6 +484,14 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		glu.gluPerspective(30.0f, (float) width / (float) height, 0.01f, 100.0f);
 		gl.glViewport(0, 0, width, height);
 		gl.glMatrixMode(GL.GL_MODELVIEW);
+	}
+	
+	public static Texture loadTexture(String file) throws GLException, IOException
+	{
+	    ByteArrayOutputStream os = new ByteArrayOutputStream();
+	    ImageIO.write(ImageIO.read(new File(file)), "png", os);
+	    InputStream fis = new ByteArrayInputStream(os.toByteArray());
+	    return TextureIO.newTexture(fis, true, TextureIO.PNG);
 	}
 	
 	public void keyReleased(KeyEvent arg0) {}
