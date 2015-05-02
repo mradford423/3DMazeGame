@@ -41,7 +41,7 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		private float angleX = 0.0f;
 		private float cameraAngleY = 0.0f;
 		private float cameraAngleX = 900f;
-		private float cameraPositionX = 1.0f;
+		private float cameraPositionX = 1.1f;
 		private float cameraPositionY = 0.5f;
 		private float cameraPositionZ = 8.5f;
 		private boolean drawWireframe = false;
@@ -160,7 +160,7 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		
 	}
 	
-	private Cell calculateCurrentCell(float x, float y){
+	private Cell[] calculateCurrentCell(float x, float y){
 		int heightNum = (int) (maze.length/y);
 		int heightCount = 0;
 		int widthCount = 0;
@@ -176,8 +176,16 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 			widthCount++;
 		}
 		widthCount--;
-		System.out.println(heightCount);
-		return maze[heightCount][widthCount];
+		//System.out.println(widthCount);
+		Cell[] cellList = new Cell[3];
+		cellList[0] = maze[heightCount][widthCount];
+		if(heightCount > 0){
+			cellList[1] = maze[heightCount-1][widthCount];
+		}
+		if(widthCount > 0){
+			cellList[2] = maze[heightCount][widthCount-1];
+		}
+		return cellList;
 	}
 
 	@Override
@@ -205,43 +213,59 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 	public void keyTyped(KeyEvent e) {
 		switch(e.getKeyChar()){
 		case 'w':
-			Cell testCell = calculateCurrentCell(cameraPositionX, cameraPositionZ);
+			Cell testCell = calculateCurrentCell(cameraPositionX, cameraPositionZ)[0];
 			//System.out.println(testCell.getDown());
 			int count = 0;
 			while(cameraPositionZ < cellBoundariesZ[count]){
 				count++;
 			}
 			cameraPositionZ -= .1f;
-			System.out.println(cameraPositionZ);
-			if(cameraPositionZ < (cellBoundariesZ[count] + .1f) && testCell.getDown() == true){
-					//System.out.println("stop");
-					cameraPositionZ += .1f;
+			//System.out.println(cameraPositionZ);
+			if(cameraPositionZ <= (cellBoundariesZ[count] + .1f) && testCell.getDown() == true){
+				//System.out.println("stop");
+				cameraPositionZ += .1f;
 			}
 			break;
 		case 's':
-			Cell testCell2 = calculateCurrentCell(cameraPositionX, cameraPositionZ);
+			Cell[] testCell2 = new Cell[3];
+			testCell2 = calculateCurrentCell(cameraPositionX, cameraPositionZ);
 			int count2 = 0;
-			while(cameraPositionZ > cellBoundariesZ[count2]){
+			while(cameraPositionZ < cellBoundariesZ[count2]){
 				count2++;
 			}
 			cameraPositionZ += .1f;
-			if(cameraPositionZ >= (cellBoundariesZ[count2] - .1f) && testCell2.getUp() == true){
+			if(testCell2[1] != null && count2 != 0){
+				if(cameraPositionZ > (cellBoundariesZ[count2-1] - .1f) && testCell2[1].getDown() == true){
 					cameraPositionZ -= .1f;
+				}
 			}
-			break;
+			else{
+				if(cameraPositionZ > (cellBoundariesZ[0] - .1f) && testCell2[0].getUp() == true){
+					cameraPositionZ -= .1f;
+				}
+			}
+				break;
 		case 'd':
-			Cell testCell3 = calculateCurrentCell(cameraPositionX, cameraPositionZ);
+			Cell[] testCell3 = new Cell[3];
+			testCell3 = calculateCurrentCell(cameraPositionX, cameraPositionZ);
 			int count3 = 0;
-			while(cameraPositionX < cellBoundariesX[count3]){
+			while(cameraPositionX > cellBoundariesX[count3]){
 				count3++;
 			}
 			cameraPositionX -= .1f;
-			if(cameraPositionX <= (cellBoundariesX[count3] + .1f) && testCell3.getLeft() == true){
+			if(testCell3[2] != null && count3 != 0){
+				if(cameraPositionX <= (cellBoundariesX[count3-1] + .1f) && testCell3[2].getRight() == true){
 					cameraPositionX += .1f;
+				}
+			}
+			else{
+				if(cameraPositionX <= (cellBoundariesX[0] + .1f) && testCell3[0].getLeft() == true){
+					cameraPositionX += .1f;
+				}
 			}
 			break;
 		case 'a':
-			Cell testCell4 = calculateCurrentCell(cameraPositionX, cameraPositionZ);
+			Cell testCell4 = calculateCurrentCell(cameraPositionX, cameraPositionZ)[0];
 			int count4 = 0;
 			while(cameraPositionX > cellBoundariesX[count4]){
 				count4++;
@@ -252,7 +276,6 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 			}
 			break;
 		}
-		//System.out.println(cameraPositionX);
 		calculateCurrentCell(cameraPositionX, cameraPositionZ);
 	}
 
