@@ -402,6 +402,13 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 							textures[0].disable();
 							gl.glEnd();
 						}
+						if(maze[i][j].getPowerUp()){
+							gl.glPushMatrix();
+							gl.glTranslatef(x+(cwidth/2), 0.25f, z+(cheight/2));
+							gl.glScalef(0.25f, 0.25f, 0.25f);
+							glut.glutSolidIcosahedron();
+							gl.glPopMatrix();
+						}
 					}
 				}
 		//add floor

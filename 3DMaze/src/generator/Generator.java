@@ -203,6 +203,7 @@ public class Generator {
 		maze[0][1].setRight(false);
 		maze[1][1].setRight(false);
 		maze[2][1].setDown(false);
+		maze[2][1].setPowerUp(true);
 		maze[4][1].setRight(false);
 		maze[5][1].setDown(false);
 		maze[5][1].setRight(false);

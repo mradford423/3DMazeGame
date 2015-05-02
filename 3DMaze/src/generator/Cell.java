@@ -8,6 +8,7 @@ public class Cell {
 	private boolean left;
 	private boolean right;
 	private boolean isEdge;
+	private boolean powerUp;
 	private float width;
 	private float height;
 	
@@ -22,6 +23,7 @@ public class Cell {
 		this.isEdge = false;
 		this.width = width;
 		this.height = height;
+		this.powerUp = false;
 	}
 	
 	public Cell(int col, int r, boolean isUp, boolean isDown, boolean isLeft, boolean isRight){
@@ -96,5 +98,13 @@ public class Cell {
 	
 	public boolean getEdge(){
 		return isEdge;
+	}
+	
+	public void setPowerUp(boolean power){
+		powerUp = power;
+	}
+	
+	public boolean getPowerUp(){
+		return powerUp;
 	}
 }
