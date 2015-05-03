@@ -6,7 +6,7 @@ import java.awt.event.*;
 import javax.imageio.ImageIO;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
-import javax.swing.JFrame;
+import javax.swing.*;
 
 import com.sun.opengl.util.*;
 import com.sun.opengl.util.texture.Texture;
@@ -225,6 +225,11 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 				//System.out.println("stop");
 				cameraPositionZ += .1f;
 			}
+			if(testCell.getFinish()){
+				System.out.println("You win!");
+				GeneratorMain.infoBox("You win!", "Congratulations");
+				System.exit(0);
+			}
 			break;
 		case 's':
 			Cell[] testCell2 = new Cell[3];
@@ -409,6 +414,13 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 							glut.glutSolidIcosahedron();
 							gl.glPopMatrix();
 						}
+						if(maze[i][j].getFinish()){
+							gl.glPushMatrix();
+							gl.glTranslatef(x+(cwidth/2), 0.25f, z+(cheight/2));
+							gl.glScalef(0.25f, 0.25f, 0.25f);
+							glut.glutSolidTorus(0.5f, 2.0f, 32, 32);
+							gl.glPopMatrix();
+						}
 					}
 				}
 		//add floor
@@ -454,7 +466,7 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		lightPos[0] = (maze.length*maze[0][0].getHeight())/2;
 		lightPos[1] = 5.0f;
 		lightPos[2] = (maze.length*maze[0][0].getWidth())/2;
-		lightPos[3] = 1f;
+		lightPos[3] = 0f;
 		generator.maze1();
 		System.out.println(generator.toString());
 		gl = drawable.getGL();
@@ -527,6 +539,12 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 	    InputStream fis = new ByteArrayInputStream(os.toByteArray());
 	    return TextureIO.newTexture(fis, true, TextureIO.PNG);
 	}
+	
+	public static void infoBox(String infoMessage, String titleBar)
+    {
+        JOptionPane.showMessageDialog(null, infoMessage, "InfoBox: " + titleBar, JOptionPane.INFORMATION_MESSAGE);
+    }
+
 	
 	public void keyReleased(KeyEvent arg0) {}
 	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {}

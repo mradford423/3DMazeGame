@@ -11,7 +11,7 @@ public class Cell {
 	private boolean powerUp;
 	private float width;
 	private float height;
-	
+	private boolean finish;
 	
 	public Cell(int col, int r, float width, float height){
 		this.column = col;
@@ -24,6 +24,7 @@ public class Cell {
 		this.width = width;
 		this.height = height;
 		this.powerUp = false;
+		this.finish = false;
 	}
 	
 	public Cell(int col, int r, boolean isUp, boolean isDown, boolean isLeft, boolean isRight){
@@ -106,5 +107,13 @@ public class Cell {
 	
 	public boolean getPowerUp(){
 		return powerUp;
+	}
+	
+	public void setFinish(boolean isFinish){
+		finish = isFinish;
+	}
+	
+	public boolean getFinish(){
+		return finish;
 	}
 }

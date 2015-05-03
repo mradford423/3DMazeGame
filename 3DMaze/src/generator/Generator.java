@@ -133,6 +133,7 @@ public class Generator {
 		maze[3][1].setDown(false);
 		maze[5][1].setDown(false);
 		maze[6][1].setRight(false);
+		maze[7][1].setPowerUp(true);
 		
 		maze[0][2].setDown(false);
 		maze[0][2].setRight(false);
@@ -180,11 +181,13 @@ public class Generator {
 		maze[4][6].setRight(false);
 		maze[5][6].setDown(false);
 		
+		maze[0][7].setPowerUp(true);
 		maze[1][7].setDown(false);
 		maze[2][7].setDown(false);
 		maze[4][7].setDown(false);
 		maze[5][7].setDown(false);
 		maze[6][7].setDown(false);
+		maze[7][7].setFinish(true);
 	}
 	
 	public void maze1(){
@@ -228,6 +231,7 @@ public class Generator {
 		maze[7][3].setRight(false);
 		
 		maze[0][4].setRight(false);
+		maze[0][4].setPowerUp(true);
 		maze[1][4].setRight(false);
 		maze[2][4].setRight(false);
 		maze[3][4].setRight(false);
@@ -257,5 +261,6 @@ public class Generator {
 		maze[2][7].setDown(false);
 		maze[4][7].setDown(false);
 		maze[6][7].setDown(false);
+		maze[7][7].setFinish(true);
 	}
 }
