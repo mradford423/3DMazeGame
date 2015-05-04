@@ -2,6 +2,7 @@ package generator;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 import javax.media.opengl.*;
@@ -587,6 +588,13 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 			e.printStackTrace();
 		}
 		playAudio(); //Play background music
+		
+		//Make cursor invisible
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+	    Point hotSpot = new Point(0,0);
+	    BufferedImage cursorImage = new BufferedImage(1, 1, BufferedImage.TRANSLUCENT); 
+	    Cursor invisibleCursor = toolkit.createCustomCursor(cursorImage, hotSpot, "InvisibleCursor");        
+	    setCursor(invisibleCursor);
 	}
 
 	@Override
