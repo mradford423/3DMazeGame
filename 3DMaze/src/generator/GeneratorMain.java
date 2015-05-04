@@ -6,6 +6,11 @@ import java.awt.event.*;
 import javax.imageio.ImageIO;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 
 import com.sun.opengl.util.*;
@@ -39,6 +44,7 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		private float scale = 1.0f;
 		private float angleY = 0.0f;
 		private float angleX = 0.0f;
+		private float angleZ = 0f;
 		private float cameraAngleY = 0.0f;
 		private float cameraAngleX = 900f;
 		private float cameraPositionX = 1.1f;
@@ -230,6 +236,10 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 				GeneratorMain.infoBox("You win!", "Congratulations");
 				System.exit(0);
 			}
+			if(testCell.getPowerUp()){
+				angleZ += 180f;
+				testCell.setPowerUp(false);
+			}
 			break;
 		case 's':
 			Cell[] testCell2 = new Cell[3];
@@ -248,6 +258,10 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 				if(cameraPositionZ > (cellBoundariesZ[0] - .1f) && testCell2[0].getUp() == true){
 					cameraPositionZ -= .1f;
 				}
+			}
+			if(testCell2[0].getPowerUp()){
+				angleZ += 180f;
+				testCell2[0].setPowerUp(false);
 			}
 				break;
 		case 'd':
@@ -268,6 +282,10 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 					cameraPositionX += .1f;
 				}
 			}
+			if(testCell3[0].getPowerUp()){
+				angleZ += 180f;
+				testCell3[0].setPowerUp(false);
+			}
 			break;
 		case 'a':
 			Cell testCell4 = calculateCurrentCell(cameraPositionX, cameraPositionZ)[0];
@@ -279,9 +297,13 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 			if(cameraPositionX >= (cellBoundariesX[count4] - .1f) && testCell4.getRight() == true){
 					cameraPositionX -= .1f;
 			}
+			if(testCell4.getPowerUp()){
+				angleZ += 180f;
+				testCell4.setPowerUp(false);
+			}
 			break;
 		}
-		calculateCurrentCell(cameraPositionX, cameraPositionZ);
+		//calculateCurrentCell(cameraPositionX, cameraPositionZ);
 	}
 
 	@Override
@@ -305,6 +327,7 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		gl.glScalef(scale, scale, scale);
 		gl.glRotatef(angleY, 1.0f, 0.0f, 0.0f);
 		gl.glRotatef(angleX, 0.0f, 1.0f, 0.0f);
+		gl.glRotatef(angleZ, 0.0f, 0.0f, 1.0f);
 		gl.glTranslatef(-cameraPositionX, -cameraPositionY, cameraPositionZ);
 		//Display Maze
 				for(int i = 0; i < maze.length; i++){
@@ -410,7 +433,7 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 						if(maze[i][j].getPowerUp()){
 							gl.glPushMatrix();
 							gl.glTranslatef(x+(cwidth/2), 0.25f, z+(cheight/2));
-							gl.glScalef(0.25f, 0.25f, 0.25f);
+							gl.glScalef(0.2f, 0.2f, 0.2f);
 							glut.glutSolidIcosahedron();
 							gl.glPopMatrix();
 						}
@@ -456,6 +479,25 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		textures[2].disable();
 		gl.glEnd();
 		gl.glPopMatrix();
+	}
+	
+	private void playAudio(){
+		try {
+			// Open an audio input stream.           
+			File soundFile = new File("background.wav"); //you could also get the sound file with an URL
+			AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);              
+			// Get a sound clip resource.
+			Clip clip = AudioSystem.getClip();
+			// Open audio clip and load samples from the audio input stream.
+			clip.open(audioIn);
+			clip.loop(clip.LOOP_CONTINUOUSLY);
+		} catch (UnsupportedAudioFileException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (LineUnavailableException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -519,6 +561,7 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		playAudio();
 	}
 
 	@Override
