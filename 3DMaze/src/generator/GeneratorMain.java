@@ -443,6 +443,7 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 							gl.glEnd();
 						}
 						if(maze[i][j].getPowerUp()){
+							//draw powerup using glut
 							gl.glPushMatrix();
 							gl.glTranslatef(x+(cwidth/2), 0.25f, z+(cheight/2));
 							gl.glScalef(0.2f, 0.2f, 0.2f);
@@ -450,6 +451,7 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 							gl.glPopMatrix();
 						}
 						if(maze[i][j].getFinish()){
+							//draw finish using glut
 							gl.glPushMatrix();
 							gl.glTranslatef(x+(cwidth/2), 0.25f, z+(cheight/2));
 							gl.glScalef(0.25f, 0.25f, 0.25f);
@@ -523,10 +525,12 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		Generator generator = new Generator(8,8,mazeWidth,mazeHeight);
 		maze = generator.getMaze();
 		generator.generate();
+		//modify intial lighting position
 		lightPos[0] = (maze.length*maze[0][0].getHeight())/2;
 		lightPos[1] = 5.0f;
 		lightPos[2] = (maze.length*maze[0][0].getWidth())/2;
 		lightPos[3] = 0f;
+		//generate a maze type
 		generator.maze1();
 		System.out.println(generator.toString());
 		gl = drawable.getGL();
@@ -601,6 +605,7 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 	    return TextureIO.newTexture(fis, true, TextureIO.PNG);
 	}
 	
+	//create infobox, used when the game is won
 	private static void infoBox(String infoMessage, String titleBar)
     {
         JOptionPane.showMessageDialog(null, infoMessage, "InfoBox: " + titleBar, JOptionPane.INFORMATION_MESSAGE);
