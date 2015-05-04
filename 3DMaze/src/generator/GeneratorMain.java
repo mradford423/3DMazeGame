@@ -511,6 +511,10 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 			// Open audio clip and load samples from the audio input stream.
 			clip.open(audioIn);
 			clip.loop(clip.LOOP_CONTINUOUSLY); //endlessly loop
+			
+			//volume control, currently makes it quieter
+			FloatControl volume = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+			volume.setValue(-10f);
 		} catch (UnsupportedAudioFileException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
