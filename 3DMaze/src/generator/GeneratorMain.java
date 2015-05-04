@@ -239,6 +239,9 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 			if(testCell.getPowerUp()){
 				angleZ += 180f;
 				testCell.setPowerUp(false);
+				lightPos[0] *= -1;
+				lightPos[1] *= -1;
+				lightPos[3] *= -1;
 			}
 			break;
 		case 's':
@@ -262,6 +265,9 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 			if(testCell2[0].getPowerUp()){
 				angleZ += 180f;
 				testCell2[0].setPowerUp(false);
+				lightPos[0] *= -1;
+				lightPos[1] *= -1;
+				lightPos[3] *= -1;
 			}
 				break;
 		case 'd':
@@ -285,6 +291,9 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 			if(testCell3[0].getPowerUp()){
 				angleZ += 180f;
 				testCell3[0].setPowerUp(false);
+				lightPos[0] *= -1;
+				lightPos[1] *= -1;
+				lightPos[3] *= -1;
 			}
 			break;
 		case 'a':
@@ -300,6 +309,9 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 			if(testCell4.getPowerUp()){
 				angleZ += 180f;
 				testCell4.setPowerUp(false);
+				lightPos[0] *= -1;
+				lightPos[1] *= -1;
+				lightPos[3] *= -1;
 			}
 			break;
 		}
