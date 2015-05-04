@@ -6,55 +6,40 @@ import java.awt.event.*;
 import javax.imageio.ImageIO;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.*;
 import javax.swing.*;
 
 import com.sun.opengl.util.*;
-import com.sun.opengl.util.texture.Texture;
-import com.sun.opengl.util.texture.TextureIO;
+import com.sun.opengl.util.texture.*;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-
-import javax.media.opengl.GLEventListener;
-import javax.swing.JFrame;
+import java.io.*;
 
 public class GeneratorMain extends JFrame implements GLEventListener, KeyListener, MouseListener, MouseMotionListener, ActionListener{
 	
-	// mouse control variables
 		private boolean initialized = false;
-		private boolean bounds = false;
 		private final GLCanvas canvas;
 		private int winW = 750, winH = 750;
-		private int mouseX, mouseY;
-		private int mouseButton;
-		private boolean mouseClick = false;
-		private boolean clickedOnShape = false;
-
+		//mouse control variables
 		// gl shading/transformation variables
 		private float tx = 0.0f, ty = 0.0f;
 		private float scale = 1.0f;
 		private float angleY = 0.0f;
 		private float angleX = 0.0f;
 		private float angleZ = 0f;
+		//Camera variables
 		private float cameraAngleY = 0.0f;
 		private float cameraAngleX = 900f;
 		private float cameraPositionX = 1.1f;
 		private float cameraPositionY = 0.5f;
 		private float cameraPositionZ = 8.5f;
+		
 		private boolean drawWireframe = false;
 		private float lightPos[] = { -5.0f, 10.0f, 5.0f, 1.0f };
+		//OpenGL variables
 		private GL gl;
 		private final GLU glu = new GLU();
 		private final GLUT glut = new GLUT();
+		//Maze variables
 		private Cell[][] maze;
 		private int mazeWidth = 2;
 		private int mazeHeight = 2;
@@ -64,25 +49,6 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 
 	public static void main(String[] args) {
 		new GeneratorMain();
-		
-		
-		/*Cell[][] maze = generator.getMaze();
-		for(int i = 0; i < 16; i++){
-			for(int j = 0; j < 16; j++){
-				int count = 0;
-				if(maze[i][j].getUp())
-					count+=1;
-				if(maze[i][j].getDown())
-					count+=1;
-				if(maze[i][j].getLeft())
-					count+=1;
-				if(maze[i][j].getRight())
-					count+=1;
-				System.out.print(count + " ");
-			}
-			System.out.println("");
-		}*/
-
 	}
 	
 	public GeneratorMain(){
@@ -101,59 +67,28 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		if(initialized == true){
-			int oldX;
-			int oldY;
-			if(bounds == false){
-				oldX = winW/2;
-				oldY = winH/2;
-			}
-			else{
-				oldX = mouseX;
-				oldY = mouseY;
-			}
 			int newX = e.getX();
-			//System.out.println(oldX);
 			int newY = e.getY();
-			float screensize = (float)winW/360;
-			//System.out.println(screensize);
-			//System.out.println(newX - oldX);
 			cameraAngleY += 1 * (newY - winH/2);
-			//System.out.println(cameraAngleX);
-			//cameraAngleX = 0;
 			cameraAngleX += 1 * (newX - winW/2);
-			//System.out.println(cameraAngleX);
-			//System.out.println(newY - winH/2);
-			//System.out.println(newY);
-			//System.out.println(winH/2);
+			
+			//Limit looking up/down
 			if(cameraAngleY > 90){
 				cameraAngleY = 90;
 			}
 			else if(cameraAngleY < -90){
 				cameraAngleY = -90;
 			}
+			
+			//Spin in a circle (wrap around)
 			if(cameraAngleX > (1500)){
 				cameraAngleX = (-300);
 			}
 			else if(cameraAngleX < (-1500)){
 				cameraAngleX = 300;
 			}
-			//System.out.println(cameraAngleY);
-			//glu.gluLookAt(10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 0, 1.0, 0);
-			/*if(newY > 90){
-				newY = 90;
-			}
-			else if(newY < -90){
-				newY = -90;
-			}
-			if(newX > 360){
-				newX = newX - 360;
-			}
-			else if(newX < 0){
-				newX = newX + 360;
-			}*/
-			mouseX = newX;
-			mouseY = newY;
-			bounds = true;
+			
+			//Move mouse back to center
 			try{
 				Robot robot = new Robot();
 				robot.mouseMove((winW/2) + 8, winH/2 + 30);
@@ -167,22 +102,26 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 	}
 	
 	private Cell[] calculateCurrentCell(float x, float y){
-		int heightNum = (int) (maze.length/y);
 		int heightCount = 0;
 		int widthCount = 0;
 		float yCopy = 10;
 		float xCopy = 0;
+		
+		//Find y value of current cell
 		while(y <= yCopy){
 			yCopy -= mazeHeight;
 			heightCount++;
 		}
 		heightCount--;
+		
+		//Find x value of current cell
 		while(x >= xCopy){
 			xCopy += mazeWidth;
 			widthCount++;
 		}
 		widthCount--;
-		//System.out.println(widthCount);
+		
+		//Store three cells: current cell, cell above, cell to the left
 		Cell[] cellList = new Cell[3];
 		cellList[0] = maze[heightCount][widthCount];
 		if(heightCount > 0){
@@ -197,15 +136,8 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 	@Override
 	public void keyPressed(KeyEvent e) {
 		switch(e.getKeyCode()) {
-		/*case KeyEvent.VK_W:
-				cameraPositionZ += .5f;
-				break;*/
-		case KeyEvent.VK_SPACE:
-			cameraPositionY += .5f;
-			break;
-		case KeyEvent.VK_B:
-			cameraPositionY -= .5f;
-			break;
+		
+		//Quit the game
 		case KeyEvent.VK_ESCAPE:
 		case KeyEvent.VK_Q:
 			System.exit(0);
@@ -220,22 +152,27 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		switch(e.getKeyChar()){
 		case 'w':
 			Cell testCell = calculateCurrentCell(cameraPositionX, cameraPositionZ)[0];
-			//System.out.println(testCell.getDown());
 			int count = 0;
+			
+			//Calculate current global Z value of boundary in w-direction
 			while(cameraPositionZ < cellBoundariesZ[count]){
 				count++;
 			}
+			
+			//Try to move forward, if hitting a wall, move back
 			cameraPositionZ -= .1f;
-			//System.out.println(cameraPositionZ);
 			if(cameraPositionZ <= (cellBoundariesZ[count] + .1f) && testCell.getDown() == true){
-				//System.out.println("stop");
 				cameraPositionZ += .1f;
 			}
+			
+			//If cell contains finish, end the game
 			if(testCell.getFinish()){
 				System.out.println("You win!");
 				GeneratorMain.infoBox("You win!", "Congratulations");
 				System.exit(0);
 			}
+			
+			//If cell contains powerup, walk on opposite of current surface: floor or ceiling
 			if(testCell.getPowerUp()){
 				angleZ += 180f;
 				testCell.setPowerUp(false);
@@ -248,11 +185,15 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 			Cell[] testCell2 = new Cell[3];
 			testCell2 = calculateCurrentCell(cameraPositionX, cameraPositionZ);
 			int count2 = 0;
+			
+			//Calculate current global Z value of boundary in s-direction
 			while(cameraPositionZ < cellBoundariesZ[count2]){
 				count2++;
 			}
+			
+			//Try to move, if hitting a wall, move back
 			cameraPositionZ += .1f;
-			if(testCell2[1] != null && count2 != 0){
+			if(testCell2[1] != null && count2 != 0){ //If at edge of maze
 				if(cameraPositionZ > (cellBoundariesZ[count2-1] - .1f) && testCell2[1].getDown() == true){
 					cameraPositionZ -= .1f;
 				}
@@ -262,6 +203,15 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 					cameraPositionZ -= .1f;
 				}
 			}
+			
+			//If cell contains finish, end game
+			if(testCell2[0].getFinish()){
+				System.out.println("You win!");
+				GeneratorMain.infoBox("You win!", "Congratulations");
+				System.exit(0);
+			}
+			
+			//If cell contains powerup, walk on opposite of current surface: floor or ceiling
 			if(testCell2[0].getPowerUp()){
 				angleZ += 180f;
 				testCell2[0].setPowerUp(false);
@@ -274,11 +224,15 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 			Cell[] testCell3 = new Cell[3];
 			testCell3 = calculateCurrentCell(cameraPositionX, cameraPositionZ);
 			int count3 = 0;
+			
+			//Calculate current global X value of boundary in d-direction
 			while(cameraPositionX > cellBoundariesX[count3]){
 				count3++;
 			}
+			
+			//Try to move, if hitting a wall, move back
 			cameraPositionX -= .1f;
-			if(testCell3[2] != null && count3 != 0){
+			if(testCell3[2] != null && count3 != 0){ //At edge of maze
 				if(cameraPositionX <= (cellBoundariesX[count3-1] + .1f) && testCell3[2].getRight() == true){
 					cameraPositionX += .1f;
 				}
@@ -288,6 +242,15 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 					cameraPositionX += .1f;
 				}
 			}
+			
+			//If cell contains finish, end game
+			if(testCell3[0].getFinish()){
+				System.out.println("You win!");
+				GeneratorMain.infoBox("You win!", "Congratulations");
+				System.exit(0);
+			}
+			
+			//If cell contains powerup, walk on opposite of current surface: floor or ceiling
 			if(testCell3[0].getPowerUp()){
 				angleZ += 180f;
 				testCell3[0].setPowerUp(false);
@@ -299,13 +262,26 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		case 'a':
 			Cell testCell4 = calculateCurrentCell(cameraPositionX, cameraPositionZ)[0];
 			int count4 = 0;
+			
+			//Calculate current global X value of boundary in a-direction
 			while(cameraPositionX > cellBoundariesX[count4]){
 				count4++;
 			}
+			
+			//Try to move, if hitting a wall, move back
 			cameraPositionX += .1f;
 			if(cameraPositionX >= (cellBoundariesX[count4] - .1f) && testCell4.getRight() == true){
 					cameraPositionX -= .1f;
 			}
+			
+			//If cell contains finish, end game
+			if(testCell4.getFinish()){
+				System.out.println("You win!");
+				GeneratorMain.infoBox("You win!", "Congratulations");
+				System.exit(0);
+			}
+			
+			//If cell contains powerup, walk on opposite of current surface: floor or ceiling
 			if(testCell4.getPowerUp()){
 				angleZ += 180f;
 				testCell4.setPowerUp(false);
@@ -315,7 +291,6 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 			}
 			break;
 		}
-		//calculateCurrentCell(cameraPositionX, cameraPositionZ);
 	}
 
 	@Override
@@ -328,19 +303,20 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
 	}
 	
-	public void drawShape(){
+	private void drawShape(){
 		gl.glLoadIdentity();
 		gl.glPushMatrix();
+		
+		//Camera rotation
 		gl.glRotatef(-cameraAngleY/5, 1.0f, 0, 0);
-		//System.out.println(-cameraAngleX/3);
 		gl.glRotatef(-cameraAngleX/5, 0, 1.0f, 0);
 		gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, lightPos, 0);
 		gl.glTranslatef(tx, ty, -10.0f);
 		gl.glScalef(scale, scale, scale);
 		gl.glRotatef(angleY, 1.0f, 0.0f, 0.0f);
 		gl.glRotatef(angleX, 0.0f, 1.0f, 0.0f);
-		gl.glRotatef(angleZ, 0.0f, 0.0f, 1.0f);
-		gl.glTranslatef(-cameraPositionX, -cameraPositionY, cameraPositionZ);
+		gl.glRotatef(angleZ, 0.0f, 0.0f, 1.0f); //If powerup is activated, walk on opposite surface
+		gl.glTranslatef(-cameraPositionX, -cameraPositionY, cameraPositionZ); //player movement
 		//Display Maze
 				for(int i = 0; i < maze.length; i++){
 					for(int j = 0; j < maze[i].length; j++){
@@ -350,9 +326,13 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 						float z = cheight * i;
 						if(i-1 >= 0){
 							if(!maze[i-1][j].getDown() && maze[i][j].getUp()){
+								
+								//Use brick texture
 								textures[0].enable();
 								textures[0].bind();
 								gl.glBegin(GL.GL_QUADS);
+								
+								//Attach Textures
 								gl.glTexCoord2d(0.0, 0.0);
 								gl.glVertex3f(x, 0, z); //bottom left
 								gl.glTexCoord2d(0.0, 1.0);
@@ -366,9 +346,13 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 							}
 						}
 						else if(maze[i][j].getUp()){
+							
+							//Use brick texture
 							textures[0].enable();
 							textures[0].bind();
 							gl.glBegin(GL.GL_QUADS);
+							
+							//Attach texture
 							gl.glTexCoord2d(0.0, 0.0);
 							gl.glVertex3f(x, 0, z); //bottom left
 							gl.glTexCoord2d(0.0, 1.0);
@@ -382,9 +366,13 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 						}
 						if(j-1 >= 0){
 							if(!maze[i][j-1].getRight() && maze[i][j].getLeft()){
+								
+								//Use brick texture
 								textures[0].enable();
 								textures[0].bind();
 								gl.glBegin(GL.GL_QUADS);
+								
+								//Attach Texture
 								gl.glTexCoord2d(0.0, 0.0);
 								gl.glVertex3f(x, 0, z); //bottom left
 								gl.glTexCoord2d(0.0, 1.0);
@@ -398,9 +386,13 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 							}
 						}
 						else if(maze[i][j].getLeft()){
+							
+							//Use brick texture
 							textures[0].enable();
 							textures[0].bind();
 							gl.glBegin(GL.GL_QUADS);
+							
+							//Attach Texture
 							gl.glTexCoord2d(0.0, 0.0);
 							gl.glVertex3f(x, 0, z); //bottom left
 							gl.glTexCoord2d(0.0, 1.0);
@@ -413,9 +405,13 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 							gl.glEnd();
 						}
 						if(maze[i][j].getDown()){
+							
+							//Use brick texture
 							textures[0].enable();
 							textures[0].bind();
 							gl.glBegin(GL.GL_QUADS);
+							
+							//Attach texture
 							gl.glTexCoord2d(0.0, 0.0);
 							gl.glVertex3f(x, 0, z+cheight); //bottom left
 							gl.glTexCoord2d(0.0, 1.0);
@@ -428,9 +424,13 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 							gl.glEnd();
 						}
 						if(maze[i][j].getRight()){
+							
+							//Use brick texture
 							textures[0].enable();
 							textures[0].bind();
 							gl.glBegin(GL.GL_QUADS);
+							
+							//Attach texture
 							gl.glTexCoord2d(0.0, 0.0);
 							gl.glVertex3f(x+cwidth, 0, z); //bottom left
 							gl.glTexCoord2d(0.0, 1.0);
@@ -458,12 +458,15 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 						}
 					}
 				}
-		//add floor
+				
+		//add floor, use carpet texture
 		textures[1].setTexParameteri(GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
 		textures[1].setTexParameteri(GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
 		textures[1].enable();
 		textures[1].bind();
 		gl.glBegin(GL.GL_QUADS);
+		
+		//Attach texture
 		gl.glTexCoord2d(maze.length*(maze[0][0].getHeight()), 0.0);
 		gl.glVertex3f(maze.length*(maze[0][0].getHeight()), 0, 0); //bottom left
 		gl.glTexCoord2d(0.0, 1.0);
@@ -474,12 +477,15 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		gl.glVertex3f(maze.length*maze[0][0].getHeight(), 0, maze[0].length*(maze[0][0].getWidth())); //bottom right
 		textures[1].disable();
 		gl.glEnd();
-		//add ceiling 
+		
+		//add ceiling, use tile texture 
 		textures[2].setTexParameteri(GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
 		textures[2].setTexParameteri(GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
 		textures[2].enable();
 		textures[2].bind();
 		gl.glBegin(GL.GL_QUADS);
+		
+		//Attach texture
 		gl.glTexCoord2d(maze.length*(maze[0][0].getHeight())*2.5, 0.0);
 		gl.glVertex3f(maze.length*(maze[0][0].getHeight()), 1, 0); //bottom left
 		gl.glTexCoord2d(0.0, 1.0);
@@ -496,13 +502,13 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 	private void playAudio(){
 		try {
 			// Open an audio input stream.           
-			File soundFile = new File("background.wav"); //you could also get the sound file with an URL
+			File soundFile = new File("background.wav");
 			AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);              
 			// Get a sound clip resource.
 			Clip clip = AudioSystem.getClip();
 			// Open audio clip and load samples from the audio input stream.
 			clip.open(audioIn);
-			clip.loop(clip.LOOP_CONTINUOUSLY);
+			clip.loop(clip.LOOP_CONTINUOUSLY); //endlessly loop
 		} catch (UnsupportedAudioFileException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -532,12 +538,11 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		gl.glShadeModel(GL.GL_SMOOTH);
 		gl.glEnable(GL.GL_DEPTH_TEST);
 		gl.glDepthFunc(GL.GL_LESS);
-		//gl.glCullFace(GL.GL_BACK);
-		//gl.glEnable(GL.GL_CULL_FACE);
-		// set clear color: this determines the background color (which is dark gray)
 		gl.glClearColor(.3f, .3f, .3f, 1f);
 		gl.glClearDepth(1.0f);
 		initialized = true;
+		
+		//Set all of the cell boundaries of the maze
 		cellBoundariesX = new int[maze.length + 1];
 		cellBoundariesZ = new int[maze[0].length + 1];
 		int count = 0;
@@ -562,18 +567,18 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		}
 		count = count - mazeHeight;
 		cellBoundariesZ[i] = count;
+		
+		//Load the wall, floor, and ceiling textures
 		try {
 			textures[0] = loadTexture("brick.png");
 			textures[1] = loadTexture("carpet.png");
 			textures[2] = loadTexture("tile.png");
 		} catch (GLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		playAudio();
+		playAudio(); //Play background music
 	}
 
 	@Override
@@ -587,7 +592,8 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 	}
 	
-	public static Texture loadTexture(String file) throws GLException, IOException
+	//Load a texture from a png image
+	private static Texture loadTexture(String file) throws GLException, IOException
 	{
 	    ByteArrayOutputStream os = new ByteArrayOutputStream();
 	    ImageIO.write(ImageIO.read(new File(file)), "png", os);
@@ -595,12 +601,12 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 	    return TextureIO.newTexture(fis, true, TextureIO.PNG);
 	}
 	
-	public static void infoBox(String infoMessage, String titleBar)
+	private static void infoBox(String infoMessage, String titleBar)
     {
         JOptionPane.showMessageDialog(null, infoMessage, "InfoBox: " + titleBar, JOptionPane.INFORMATION_MESSAGE);
     }
 
-	
+	//Unused, but required, methods
 	public void keyReleased(KeyEvent arg0) {}
 	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {}
 	public void mouseReleased(MouseEvent e) {}
@@ -610,5 +616,4 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 	public void mouseExited(MouseEvent e) {}
 	public void actionPerformed(ActionEvent arg0) {}
 	public void mouseDragged(MouseEvent e) {}
-
 }
