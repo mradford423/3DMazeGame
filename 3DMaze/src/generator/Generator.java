@@ -54,6 +54,7 @@ public class Generator {
 				temp.setDown(true);
 			}
 		}
+		
 		/*
 		//fix corners
 		maze[0][0].setLeft(true);
