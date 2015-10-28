@@ -13,6 +13,8 @@ public class Cell {
 	private float height;
 	private boolean finish;
 	
+
+	
 	public Cell(int col, int r, float width, float height){
 		this.column = col;
 		this.row = r;
