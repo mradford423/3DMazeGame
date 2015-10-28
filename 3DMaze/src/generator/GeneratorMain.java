@@ -551,7 +551,7 @@ public class GeneratorMain extends JFrame implements GLEventListener, KeyListene
 		gl.glClearDepth(1.0f);
 		initialized = true;
 		
-		//Set all of the cell boundaries of the maze
+		//Initialize the cell boundaries of the maze
 		cellBoundariesX = new int[maze.length + 1];
 		cellBoundariesZ = new int[maze[0].length + 1];
 		int count = 0;
