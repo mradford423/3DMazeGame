@@ -1,5 +1,9 @@
 package generator;
 
+/**
+An object that represents an individual square tile in the maze
+**/
+
 public class Cell {
 	private int column;
 	private int row;
