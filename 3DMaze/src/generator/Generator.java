@@ -1,5 +1,9 @@
 package generator;
 
+/**
+This class generates the maze scenarios. maze0()and maze1() generate two different maze layouts
+**/
+
 public class Generator {
 	
 	private Cell[][] maze;
